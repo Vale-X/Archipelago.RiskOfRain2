@@ -32,7 +32,7 @@ namespace Archipelago.RiskOfRain2
         public const string PluginGUID = "com.Ijwu.Archipelago";
         public const string PluginAuthor = "Ijwu";
         public const string PluginName = "Archipelago";
-        public const string PluginVersion = "2.0";
+        public const string PluginVersion = "2.0.0";
 
         private ArchipelagoOrchestrator AP;
         private bool isPlayingAP = false;
@@ -41,7 +41,7 @@ namespace Archipelago.RiskOfRain2
         private string apServerUri = "localhost";
         private int apServerPort = 38281;
         private bool willConnectToAP = true;
-        private string apSlotName = "ijwu";
+        private string apSlotName;
         private string apPassword;
         private Color accentColor;
 
@@ -87,8 +87,8 @@ namespace Archipelago.RiskOfRain2
             On.RoR2.UI.CharacterSelectController.Awake += OnCharacterSelectAwake;
 
             //todo: remove debug
-            On.RoR2.Networking.GameNetworkManager.OnClientConnect += (self, user, t) => { };
-            IL.RoR2.UI.ConsoleWindow.CheckConsoleKey += ChangeConsoleKey;
+            //On.RoR2.Networking.GameNetworkManager.OnClientConnect += (self, user, t) => { };
+            //IL.RoR2.UI.ConsoleWindow.CheckConsoleKey += ChangeConsoleKey;
         }
 
         private void OnCharacterSelectAwake(On.RoR2.UI.CharacterSelectController.orig_Awake orig, CharacterSelectController self)
@@ -145,11 +145,13 @@ namespace Archipelago.RiskOfRain2
             Log.LogDebug($"Is deathlink option selected? '{enableDeathlink}' Difficulty: '{deathlinkDifficulty}'");
             orig(obj);
 
-            if (!isPlayingAP && willConnectToAP)
-            { 
+            if (isPlayingAP && willConnectToAP)
+            {
+                Log.LogDebug("Connected, is in singleplayer?" + CheckIsHostOrSingleplayer());
                 if (CheckIsHostOrSingleplayer())
                 {
-                    AP.HookEverything();    
+                    Log.LogDebug("Hooking Everything.");
+                    AP.HookEverything();
                 }
             }
         }

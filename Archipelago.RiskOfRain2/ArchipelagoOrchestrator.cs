@@ -66,17 +66,17 @@ namespace Archipelago.RiskOfRain2
             Stages = new StageUnlockHandler(Session.Items);
             Session.Socket.SocketClosed += Socket_SocketClosed;
             Session.Socket.PacketReceived += Socket_PacketReceived;
+            tags = tags ?? new List<string>();
 
             if (enableDeathLink)
             {
-                tags = tags ?? new List<string>();
                 tags.Add("DeathLink");
             }
 
-            var loginResult = Session.TryConnectAndLogin("Risk of Rain 2", slotName, new Version(0, 2, 0), ItemsHandlingFlags.AllItems, tags, Guid.NewGuid().ToString(), password);
+            var loginResult = Session.TryConnectAndLogin("Risk of Rain 2", slotName, new Version(0, 2, 0), ItemsHandlingFlags.AllItems, tags.ToArray(), Guid.NewGuid().ToString(), password);
             if (!loginResult.Successful)
             {
-                ChatMessage.SendColored($"Failed to connect to Archipelago at {hostname}:{port} for slot {slotName}. Restart your run to try again. (Sorry)", Color.red);
+                ChatMessage.SendColored($"Failed to connect to Archipelago at {hostname}:{port} for slot {slotName}.", Color.red);
                 return false;
             }
 
@@ -128,13 +128,13 @@ namespace Archipelago.RiskOfRain2
         private void HandleLoginSuccessful(LoginSuccessful loginSuccessful)
         {
             var itemPickupStep = Convert.ToInt32(loginSuccessful.SlotData["itemPickupStep"]) + 1;
-            var totalChecks = loginSuccessful.LocationsChecked.Length + loginSuccessful.MissingChecks.Length;
+            /*var totalChecks = loginSuccessful.LocationsChecked.Length + loginSuccessful.MissingChecks.Length;
             var completedChecks = loginSuccessful.LocationsChecked;
-            var missingChecks = loginSuccessful.MissingChecks;
+            var missingChecks = loginSuccessful.MissingChecks;*/
 
             PreGameController.instance.runSeed = ulong.Parse(loginSuccessful.SlotData["seed"].ToString());
 
-            Locations.SetCheckCounts(totalChecks, itemPickupStep, completedChecks, missingChecks);
+            Locations.SetCheckCounts(Session.Locations.AllLocations.Count(), itemPickupStep, Session.Locations.AllLocationsChecked.Select(i => (int)i).ToArray(), Session.Locations.AllMissingLocations.Select(i => (int)i).ToArray());
         }
 
         private void Socket_SocketClosed(WebSocketSharp.CloseEventArgs e)

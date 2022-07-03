@@ -39,6 +39,7 @@ namespace Archipelago.RiskOfRain2.Handlers
             Log.LogDebug("HUD was enabled.");
             foreach (var type in uiModuleTypes)
             {
+                Log.LogDebug($"Adding UI element: {nameof(type)}");
                 IUIModule item = (IUIModule)Activator.CreateInstance(type);
                 item.Enable(self, client);
                 uiModules.Add(item);

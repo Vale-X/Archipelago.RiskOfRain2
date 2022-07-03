@@ -33,18 +33,18 @@ namespace Archipelago.RiskOfRain2.Handlers
         {
             this.helper = helper;
 
-            smokescreenPrefab = Resources.Load<GameObject>("Prefabs/Effects/SmokescreenEffect").InstantiateClone("LocationCheckPoof", true);
+            smokescreenPrefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/Effects/SmokescreenEffect").InstantiateClone("LocationCheckPoof", true);
             skippedItems = new PickupIndex[]
             {
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixBlue.equipmentIndex),
-                PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixEcho.equipmentIndex),
-                PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixGold.equipmentIndex),
+                //PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixEcho.equipmentIndex), // NRE because addressable is in different location, not auto assigned
+                //PickupCatalog.FindPickupIndex(JunkContent.Equipment.EliteGoldEquipment.equipmentIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixHaunted.equipmentIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixLunar.equipmentIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixPoison.equipmentIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixRed.equipmentIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixWhite.equipmentIndex),
-                PickupCatalog.FindPickupIndex(RoR2Content.Equipment.AffixYellow.equipmentIndex),
+                //PickupCatalog.FindPickupIndex(JunkContent.Equipment.EliteYellowEquipment.equipmentIndex),
                 PickupCatalog.FindPickupIndex("LunarCoin.Coin0"),
                 PickupCatalog.FindPickupIndex(RoR2Content.Items.ArtifactKey.itemIndex),
                 PickupCatalog.FindPickupIndex(RoR2Content.Artifacts.Bomb.artifactIndex),
@@ -96,15 +96,15 @@ namespace Archipelago.RiskOfRain2.Handlers
 
         public void Hook()
         {
-            On.RoR2.PickupDropletController.CreatePickupDroplet += PickupDropletController_CreatePickupDroplet;
+            On.RoR2.PickupDropletController.CreatePickupDroplet_PickupIndex_Vector3_Vector3 += PickupDropletController_CreatePickupDroplet;
         }
 
         public void Unhook()
         {
-            On.RoR2.PickupDropletController.CreatePickupDroplet -= PickupDropletController_CreatePickupDroplet;
+            On.RoR2.PickupDropletController.CreatePickupDroplet_PickupIndex_Vector3_Vector3 -= PickupDropletController_CreatePickupDroplet;
         }
 
-        private void PickupDropletController_CreatePickupDroplet(On.RoR2.PickupDropletController.orig_CreatePickupDroplet orig, PickupIndex pickupIndex, Vector3 position, Vector3 velocity)
+        private void PickupDropletController_CreatePickupDroplet(On.RoR2.PickupDropletController.orig_CreatePickupDroplet_PickupIndex_Vector3_Vector3 orig, PickupIndex pickupIndex, Vector3 position, Vector3 velocity)
         {
             if (skippedItems.Contains(pickupIndex))
             {

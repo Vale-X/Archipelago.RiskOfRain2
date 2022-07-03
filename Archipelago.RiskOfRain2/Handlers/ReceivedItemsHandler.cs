@@ -43,20 +43,24 @@ namespace Archipelago.RiskOfRain2.Handlers
                 var common = Run.instance.availableTier1DropList.Choice();
                 GiveItemToPlayers(common);
                 break;
+
                 case "Uncommon Item":
                 var uncommon = Run.instance.availableTier2DropList.Choice();
                 GiveItemToPlayers(uncommon);
                 break;
+
                 case "Legendary Item":
                 var legendary = Run.instance.availableTier3DropList.Choice();
                 GiveItemToPlayers(legendary);
                 break;
+
                 case "Boss Item":
                 var boss = Run.instance.availableBossDropList.Choice();
                 GiveItemToPlayers(boss);
                 break;
+
                 case "Lunar Item":
-                var lunar = Run.instance.availableLunarDropList.Choice();
+                var lunar = Run.instance.availableLunarItemDropList.Choice();
                 var pickupDef = PickupCatalog.GetPickupDef(lunar);
                 if (pickupDef.itemIndex != ItemIndex.None)
                 {
@@ -67,22 +71,28 @@ namespace Archipelago.RiskOfRain2.Handlers
                     GiveEquipmentToPlayers(lunar);
                 }
                 break;
+
                 case "Equipment":
                 var equipment = Run.instance.availableEquipmentDropList.Choice();
                 GiveEquipmentToPlayers(equipment);
                 break;
+
                 case "Item Scrap, White":
                 GiveItemToPlayers(PickupCatalog.FindPickupIndex(RoR2Content.Items.ScrapWhite.itemIndex));
                 break;
+
                 case "Item Scrap, Green":
                 GiveItemToPlayers(PickupCatalog.FindPickupIndex(RoR2Content.Items.ScrapGreen.itemIndex));
                 break;
+
                 case "Item Scrap, Red":
                 GiveItemToPlayers(PickupCatalog.FindPickupIndex(RoR2Content.Items.ScrapRed.itemIndex));
                 break;
+
                 case "Item Scrap, Yellow":
                 GiveItemToPlayers(PickupCatalog.FindPickupIndex(RoR2Content.Items.ScrapYellow.itemIndex));
                 break;
+
                 case "Dio's Best Friend":
                 GiveItemToPlayers(PickupCatalog.FindPickupIndex(RoR2Content.Items.ExtraLife.itemIndex));
                 break;
@@ -130,13 +140,9 @@ namespace Archipelago.RiskOfRain2.Handlers
 
         private void DisplayPickupNotification(PickupIndex index)
         {
-            // Dunno any better so hit every queue there is.
-            foreach (var queue in NotificationQueue.readOnlyInstancesList)
+            foreach (var player in PlayerCharacterMasterController.instances)
             {
-                foreach (var player in PlayerCharacterMasterController.instances)
-                {
-                    queue.OnPickup(player.master, index);
-                }
+                CharacterMasterNotificationQueue.PushPickupNotification(player.master, index);
             }
         }
     }
