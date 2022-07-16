@@ -89,6 +89,7 @@ namespace Archipelago.RiskOfRain2
         private void Items_ItemReceived(MultiClient.Net.Helpers.ReceivedItemsHelper helper)
         {
             var newItem = helper.DequeueItem();
+            Debug.Log("ItemID: " + newItem.Item);
             EnqueueItem(newItem.Item);
         }
 
@@ -120,7 +121,9 @@ namespace Archipelago.RiskOfRain2
 
         public void EnqueueItem(int itemId)
         {
+            Debug.Log("ItemID Enqueue: " + itemId);
             var item = session.Items.GetItemName(itemId);
+            Debug.LogWarning(item);
             itemReceivedQueue.Enqueue(item);
         }
 
@@ -149,6 +152,7 @@ namespace Archipelago.RiskOfRain2
         private void HandleReceivedItemQueueItem()
         {
             string itemReceived = itemReceivedQueue.Dequeue();
+            Debug.Log($"Item Received: {itemReceived}");
 
             switch (itemReceived)
             {
@@ -178,6 +182,21 @@ namespace Archipelago.RiskOfRain2
                     else if (pickupDef.equipmentIndex != EquipmentIndex.None)
                     {
                         GiveEquipmentToPlayers(lunar);
+                    }
+                    break;
+                case "Void Item":
+                    var voidCombined =    Run.instance.availableVoidTier1DropList;
+                    voidCombined.AddRange(Run.instance.availableVoidTier2DropList);
+                    voidCombined.AddRange(Run.instance.availableVoidTier3DropList);
+                    voidCombined.AddRange(Run.instance.availableVoidBossDropList);
+                    var voidItem = voidCombined.Choice();
+                    if (!Run.instance.IsItemExpansionLocked(PickupCatalog.GetPickupDef(voidItem).itemIndex))
+                    {
+                        GiveItemToPlayers(voidItem);
+                    }
+                    else
+                    {
+                        Debug.LogError("Expansion locked, can't give item!");
                     }
                     break;
                 case "Equipment":
